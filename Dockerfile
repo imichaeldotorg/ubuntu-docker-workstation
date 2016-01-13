@@ -20,12 +20,11 @@ RUN /bin/bash -c 'echo "wsuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers'
 USER wsuser 
 ENV USER wsuser 
 
-
 # Configure VNC - replace "YOURPASSWORD" here with a preferred VNC password
 RUN echo 'YOURPASSWORD' >/tmp/pwd && echo 'YOURPASSWORD' >> /tmp/pwd && vncpasswd < /tmp/pwd && rm /tmp/pwd
 
-# Default Command starts a 1080p VNC session.
-CMD /bin/bash -c "vncserver :1 -geometry 1920x1080 -depth 24 && tail -F /root/.vnc/*.log"
+# Default Command starts a 1920x1200 VNC session, and fixes the tab key over VNC, and then tails the VNC log to keep the system running
+CMD /bin/bash -c "vncserver :1 -geometry 1920x1200 -depth 24 && sleep 5 && DISPLAY=:1 xfconf-query -c xfce4-keyboard-shortcuts -p /xfwm4/custom/'<'Super'>'Tab -r && tail -F /root/.vnc/*.log"
 
 # The VNC server listens on 5901.  You still need to expose the port at runtime. 
 EXPOSE 5901
